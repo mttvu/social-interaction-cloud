@@ -5,7 +5,7 @@ import os
 
 from sic_framework.core.component_manager_python2 import SICComponentManager
 from sic_framework.devices.naoqi_shared import *
-
+from sic_framework.devices.common_naoqi.nao_motion_streamer import NaoqiMotionStreamerService, NaoqiMotionStreamer
 
 class Nao(Naoqi):
     """
@@ -232,6 +232,9 @@ class Nao(Naoqi):
             self.logger.error("Activating test environment on Nao resulted in unknown exit status: {}".format(exit_status))
             raise RuntimeError("Unknown error occurred while creating test environment on Nao")
       
+    @property
+    def motion_streaming(self):
+        return self._get_connector(NaoqiMotionStreamer) 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -247,7 +250,7 @@ if __name__ == "__main__":
         os.environ["DB_PASS"] = args.redis_pass
 
     nao_components = shared_naoqi_components + [
-        # todo,
+        NaoqiMotionStreamerService
     ]
 
     SICComponentManager(nao_components)
