@@ -73,9 +73,11 @@ def get_redis_db_ip_password():
     """
     Get the redis db ip and password from environment variables. If not set, use default values.
     """
-    host = os.getenv("DB_IP", "127.0.0.1")
-    password = os.getenv("DB_PASS", "changemeplease")
-    return host, password
+    host = os.environ.get('REDIS_HOST')
+    password = os.environ.get('REDIS_KEY')
+    port = os.environ.get('REDIS_PORT')
+
+    return host, password, port
 
 
 class SICRedis:
@@ -97,11 +99,17 @@ class SICRedis:
 
 
         # we assume that a password is required
-        host, password = get_redis_db_ip_password()
+        host, password, port= get_redis_db_ip_password()
 
         # Let's try to connect first without TLS / working without TLS facilitates simple use of redis-cli
         try:
-            self._redis = redis.Redis(host=host, ssl=False, password=password)
+            self._redis = redis.Redis(
+    host=host,
+    port=port,
+    decode_responses=True,
+    username="default",
+    password=password,
+)
         except redis.exceptions.AuthenticationError:
             # redis is running without a password, do not supply it.
             self._redis = redis.Redis(host=host, ssl=False)
