@@ -106,7 +106,7 @@ class SICRedis:
             self._redis = redis.Redis(
     host=host,
     port=port,
-    decode_responses=True,
+    decode_responses=False,
     username="default",
     password=password,
 )
