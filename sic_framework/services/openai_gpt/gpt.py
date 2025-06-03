@@ -107,7 +107,7 @@ class GPTComponent(SICComponent):
             messages.append({"role": "system", "content": system_messages})
         if context_messages:
             for context_message in context_messages:
-                messages.append({"role": "user", "content": context_message})
+                messages.append(context_message)
 
         messages.append({"role": "user", "content": user_messages})
 
@@ -115,7 +115,7 @@ class GPTComponent(SICComponent):
             model=model if model else self.params.model,
             messages=messages,
             temperature=temp if temp else self.params.temperature,
-            max_tokens=max_tokens if max_tokens else self.params.max_tokens,
+            max_tokens=16384,
         )
         content = response.choices[0].message.content
         num_tokens = response.usage.total_tokens
@@ -128,7 +128,7 @@ class GPTComponent(SICComponent):
         # self.output_message(output)
 
     def on_request(self, request):
-        self.logger.debug("GOT REQUEST: ", request)
+        print("GOT REQUEST", request)
         output = self.get_openai_response(
             request.text,
             system_messages=request.system_messages,
